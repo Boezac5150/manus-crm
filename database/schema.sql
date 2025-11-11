@@ -1,0 +1,6 @@
+-- Supabase schema (minimal)
+create table organisations ( id uuid primary key default gen_random_uuid(), name text not null, contact_email text, created_at timestamptz default now() );
+create table users ( id uuid primary key default gen_random_uuid(), org_id uuid references organisations(id) on delete cascade, email text unique not null, role text default 'user', created_at timestamptz default now() );
+create table leads ( id uuid primary key default gen_random_uuid(), org_id uuid references organisations(id) on delete cascade, name text, business_name text, phone text, notes text, status text default 'New', source text, created_at timestamptz default now() );
+create table clients ( id uuid primary key default gen_random_uuid(), org_id uuid references organisations(id) on delete cascade, name text, business_name text, phone text, hours jsonb, booking_email text, onboarding jsonb, active boolean default false, created_at timestamptz default now() );
+create table invoices ( id uuid primary key default gen_random_uuid(), org_id uuid references organisations(id) on delete cascade, client_id uuid references clients(id), items jsonb, total numeric, status text default 'pending', paypal_order_id text, created_at timestamptz default now() );
